@@ -4,7 +4,9 @@
 
 ## storage作成
 
-SFTPを利用するための前提条件
+https://docs.microsoft.com/ja-jp/azure/storage/blobs/secure-file-transfer-protocol-support-how-to?tabs=azure-portal
+
+SFTP(プレビュー)を利用するための前提条件
 ```
 標準の汎用 v2 または Premium ブロック BLOB ストレージ アカウント。
 Azure Data Lake Storage Gen2 機能を使用して Azure Blob Storage をアップグレードする
