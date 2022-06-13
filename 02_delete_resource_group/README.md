@@ -26,6 +26,119 @@ Portal画面から以下のように作成することが可能。
 
 ![delete_resoucegroup_by_name](./delete_resoucegroup_by_name.PNG)
 
+JSON形式の定義は以下のようになる。
+```
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "For_each_2": {
+                "actions": {
+                    "条件": {
+                        "actions": {
+                            "リソース_グループを削除": {
+                                "inputs": {
+                                    "host": {
+                                        "connection": {
+                                            "name": "@parameters('$connections')['arm']['connectionId']"
+                                        }
+                                    },
+                                    "method": "delete",
+                                    "path": "/subscriptions/@{encodeURIComponent('d79e0410-8e3c-4207-8d0a-1f7885d35859')}/resourcegroups/@{encodeURIComponent(items('For_each_2')?['name'])}",
+                                    "queries": {
+                                        "x-ms-api-version": "2016-06-01"
+                                    }
+                                },
+                                "runAfter": {},
+                                "type": "ApiConnection"
+                            }
+                        },
+                        "expression": {
+                            "and": [
+                                {
+                                    "contains": [
+                                        "@items('For_each_2')?['name']",
+                                        "okuyama"
+                                    ]
+                                }
+                            ]
+                        },
+                        "runAfter": {},
+                        "type": "If"
+                    }
+                },
+                "foreach": "@body('リソース_グループの一覧表示')?['value']",
+                "runAfter": {
+                    "リソース_グループの一覧表示": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "リソース_グループの一覧表示": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['arm']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/subscriptions/@{encodeURIComponent('d79e0410-8e3c-4207-8d0a-1f7885d35859')}/resourcegroups",
+                    "queries": {
+                        "x-ms-api-version": "2016-06-01"
+                    }
+                },
+                "runAfter": {},
+                "type": "ApiConnection"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "繰り返し": {
+                "evaluatedRecurrence": {
+                    "frequency": "Day",
+                    "interval": 1,
+                    "schedule": {
+                        "hours": [
+                            "20"
+                        ]
+                    },
+                    "timeZone": "Tokyo Standard Time"
+                },
+                "recurrence": {
+                    "frequency": "Day",
+                    "interval": 1,
+                    "schedule": {
+                        "hours": [
+                            "20"
+                        ]
+                    },
+                    "timeZone": "Tokyo Standard Time"
+                },
+                "type": "Recurrence"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "arm": {
+                    "connectionId": "/subscriptions/d79e0410-8e3c-4207-8d0a-1f7885d35859/resourceGroups/az-logic-apps-example-rg/providers/Microsoft.Web/connections/arm",
+                    "connectionName": "arm",
+                    "id": "/subscriptions/d79e0410-8e3c-4207-8d0a-1f7885d35859/providers/Microsoft.Web/locations/japaneast/managedApis/arm"
+                }
+            }
+        }
+    }
+}
+```
 処理の内容
 ```
 1. 繰り返し(決まった時間に実行するスケジュール)
@@ -34,8 +147,9 @@ Portal画面から以下のように作成することが可能。
  3.1 条件の判定 
  3.2 条件に一致した場合は、リソースグループを削除する
 ```
-フローが資格的に確認できるのは非常に分かりやすくて良い。
+フローが資格的に確認できるのは非常に分かりやすくて良いが、JSON形式の定義を直接編集してフローを開発するのは定義の理解などに手間がかかりすぎると感じる。
 
 # まとめ
 VS Codeの拡張機能でもデザイナーで編集可能になればさらに使いやすい。
 バージョン管理はフローの定義ファイル(JSON)を管理することになる。
+利用は単純なフローの実現にとどめた方が良い。あまり複雑なフローを作成するとメンテナンスが大変になる。
