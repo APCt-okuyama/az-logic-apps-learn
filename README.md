@@ -4,12 +4,14 @@ Logic Apps を利用してみる。
 
 リソースグループ作成
 ```
-az group create -n az-logic-apps-example-rg -l japaneast
+export RG_NAME=az-logic-apps-example-rg
+export LOCATION=japaneast
+az group create -n $RG_NAME -l $LOCATION
 ```
 
 リソースグループ削除
 ```
-az group delete -n az-logic-apps-example-rg -y
+az group delete -n $RG_NAME -y
 ```
 
 # logic apps とは (簡単に)

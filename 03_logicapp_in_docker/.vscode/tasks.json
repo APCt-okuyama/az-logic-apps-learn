@@ -10,7 +10,7 @@
       "type": "process",
       "problemMatcher": "$msCompile",
       "options": {
-        "cwd": "${workspaceFolder}/03_logicapp_in_docker/01_simple_sample_pj"
+        "cwd": "${workspaceFolder}/01_simple_project"
       }
     },
     {
@@ -19,7 +19,7 @@
       "problemMatcher": "$func-watch",
       "isBackground": true,
       "options": {
-        "cwd": "${workspaceFolder}/03_logicapp_in_docker/01_simple_sample_pj"
+        "cwd": "${workspaceFolder}/01_simple_project"
       }
     }
   ],

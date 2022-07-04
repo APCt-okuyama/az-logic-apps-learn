@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-logic-apps-example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-logic-apps-example
+  template:
+    metadata:
+      labels:
+        app: my-logic-apps-example
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: my-logic-apps-example
+        image: acr001example.azurecr.io/acr001example/my-logicapps:v1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        ports:
+        - containerPort: 80
+        env:
+        - name: REDIS
+          value: "azure-vote-back"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-logic-apps-example
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: my-logic-apps-example

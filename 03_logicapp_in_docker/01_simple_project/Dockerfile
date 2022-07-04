@@ -1,0 +1,7 @@
+FROM mcr.microsoft.com/azure-functions/node:3.0
+ENV AzureWebJobsStorage DefaultEndpointsProtocol=https;AccountName=myexamplestorage01;AccountKey=N6BDAIR3QTH5UfbNC+MD+KYuhB72cqN06t+nNZjTWorbdhoZOJltSAOM1bEX9jvyP7y4Jck3asTz+AStjGTI/A==;EndpointSuffix=core.windows.net
+ENV AzureWebJobsScriptRoot=/home/site/wwwroot AzureFunctionsJobHost__Logging__Console__IsEnabled=true FUNCTIONS_V2_COMPATIBILITY_MODE=true
+ENV WEBSITE_HOSTNAME localhost
+ENV WEBSITE_SITE_NAME myexamplelogicapp
+ENV AZURE_FUNCTIONS_ENVIRONMENT Development
+COPY . /home/site/wwwroot
