@@ -1,6 +1,10 @@
-# logic Apps in Docker (Azure Kubernates Service)
+# logic Apps はどこでも動く
 
-Dockerイメージ (mcr.microsoft.com/azure-functions/node:3.0) を利用して Logic Apps (workflow) をローカル環境や、AKS(Kubernates)環境で実行できることが確認できたのでブログにしておきます。
+Logic Apps(standard, single tenant) はどこでも動かすことが可能ということでローカル環境や、AKS(Kubernates)環境で実行できることが確認できたのでブログにしておきます。
+※どこでも動かせるとは言え、Azure Storageが必要です。
+
+(参考にしたサイト)
+https://techcommunity.microsoft.com/t5/integrations-on-azure-blog/run-logic-app-anywhere/ba-p/3118351
 
 ## Logic App とは
 
@@ -24,7 +28,8 @@ Logic Apps とはアプリ、データ、サービス、およびシステムを
 ## Logic Appの開発環境について
 
 VS Code extension Azure Logic Apps (Standard)  を利用してローカル環境で workflowを定義し動作確認を行うことが可能です。
-※ VS Code extension は ConsumptionとStandardの２つがあるので注意。今回はシングルテナントなのでStandardを選択です。
+※ VS Code extension は ConsumptionとStandardの２つがあるので注意。今回はシングルテナントなのでStandardを選択です。  
+※ GUIベースでワークフローの定義が可能なので、視覚的にもわかりやす。  
 
 ![image](./img/vscode_ext_logicapp.PNG)
 
@@ -33,7 +38,7 @@ VS Code extension Azure Logic Apps (Standard)  を利用してローカル環境
 
 今回は以下のような簡単なワークフローを vs code で作成しました。
 
-内容としては下記の２つ
+内容としては２つ
 1. Http Requestを受信するトリガー
 2. ClientにResponseを返すアクション
 
@@ -61,7 +66,7 @@ docker build --tag my-logicapps:v1 .
 docker images | grep my-logicapps
 my-logicapps                     v1                     61326060ea61   11 minutes ago   1.59GB
 ```
-※サイズが1.59GBもあります。。。
+※サイズが1.59GBもあります。
 
 ## コンテナをロカールＰＣで実行して確認
 
@@ -69,19 +74,24 @@ my-logicapps                     v1                     61326060ea61   11 minute
 docker run --rm -p 8080:80 my-logicapps
 ```
 
-APIをcallして確認する。codeはAzure Storageのコンテナー(azure-webjobs-secretsのhost.json)に格納されている。
+curlコマンドで確認してみます。
+
+1. Callback URLを取得します。
+codeはAzure Storageのコンテナー(azure-webjobs-secretsのhost.json)に格納されている。
 ```
 curl -X POST -d "" -H "Content-Type: application/json" \
 "http://localhost:8080/runtime/webhooks/workflow/api/management/workflows/MyStatufulWorkflow/triggers/manual/listCallbackUrl?api-version=2020-05-01-preview&code=PzhD2_UdggcGXctmR8r0GB6clZtEnPcAuRnEBU8Am8kaAzFuVrBjTw=="
+
 ```
 
-プロトコルをhttpsからhttpにして、ポートを合わせて実行
+2. Logic App URL(Callback URL)を呼び出します。
+※プロトコルをhttpsからhttpにして、ポートを合わせて実行
 ```
 curl -X POST -d @sample.json -H "Content-Type: application/json" \
 "http://localhost:8080/api/MyStatufulWorkflow/triggers/manual/invoke?api-version=2020-05-01-preview&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=W0Ue4MjE9HjizyPFQZueIwWC2IF6pNLa9UowbPFYlng"
 im working fine
 ```
-logic apps(workflow)からの出力が確認できる
+ワークフロー(logic apps)からの出力が確認できます。
 
 ## レジストリー(ACR) へ Push して Azure Kubernates Service で動作確認
 通常のコンテナイメージと同様にレジストリー(ACR) へ Push します。
@@ -128,5 +138,7 @@ logic apps(workflow)からの出力が確認できる
 # まとめ
 いろいろと不明の点はありますが、Kubernatesで Azure Logic Apps を動作させることができました。
 
-(参考にしたサイト)
-https://www.c-sharpcorner.com/article/create-docker-image-of-azure-logic-app-standard-and-deploy-in-azure-kubernetes-s/
+図にするとこんな感じになります。Logic Apps(workflow)を含んだPodをAKS内で実行することができました。
+
+![image](./img/logicapps_in_aks.png)
+
