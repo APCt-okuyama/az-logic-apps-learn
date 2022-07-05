@@ -1,6 +1,6 @@
-# logic Apps in Docker (Azure Kubernates Service)
+# logic Apps in Docker (Azure Kubernetes Service)
 
-Dockerイメージ (mcr.microsoft.com/azure-functions/node:3.0) を利用して Logic Apps (workflow) をローカル環境や、AKS(Kubernates)環境で実行できることが確認できたのでブログにしておきます。
+Dockerイメージ (mcr.microsoft.com/azure-functions/node:3.0) を利用して Logic Apps (workflow) をローカル環境や、AKS(Kubernetes)環境で実行できることが確認できたのでブログにしておきます。
 
 ## Logic App とは
 
@@ -154,7 +154,7 @@ pull
 docker pull acr001example.azurecr.io/my-logicapps:v1
 ```
 
-# Azure Kubernates Service で実行
+# Azure Kubernetes Service で実行
 AKSリソースの準備
 ```
 az aks create --resource-group $RG_NAME --name myAKSCluster --node-count 1 --enable-addons monitoring --generate-ssh-keys
