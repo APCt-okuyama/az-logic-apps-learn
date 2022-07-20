@@ -12,7 +12,8 @@ vs codeの拡張機能はビューとして利用可能。ロジック アプリ
 
 (注意) MSのサンプルのJSONは時々間違っていることがあります。(jsonのタグが足りないとか。)
 https://docs.microsoft.com/ja-jp/azure/logic-apps/logic-apps-data-operations-code-samples#parse-json-action-example
-
+間違いを発見した場合は余裕があればプルリクエストを出して修正してもらいましょう。
+![image](./azure-docs-pullrequest.PNG)
 
 ## 背景・ワークフローの内容
 
